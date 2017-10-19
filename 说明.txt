@@ -1,0 +1,49 @@
+
+
+本项目对比 springMVC的拦截器、servlet的过滤器Filter、监听器listener
+第一、springmvc拦截器和servlet过滤器的区别
+http://elim.iteye.com/blog/1750680
+http://blog.csdn.net/chenleixing/article/details/44573495
+第二、Servlet中的过滤器(拦截器)Filter与监听器Listener的作用和区别
+http://www.360doc.com/content/17/1019/10/48597276_696309074.shtml
+
+
+模板来源： tech27SringMVC
+过滤器和拦截器的区别：
+　　①拦截器是基于java的反射机制的，而过滤器是基于函数回调。
+　　②拦截器不依赖与servlet容器，过滤器依赖与servlet容器。
+　　③拦截器只能对action请求起作用，而过滤器则可以对几乎所有的请求起作用。
+　　④拦截器可以访问action上下文、值栈里的对象，而过滤器不能访问。
+　　⑤在action的生命周期中，拦截器可以多次被调用，而过滤器只能在容器初始化时被调用一次。
+　　⑥拦截器可以获取IOC容器中的各个bean，而过滤器就不行，这点很重要，在拦截器里注入一个service，可以调用业务逻辑。
+
+拦截器：
+第一、拦截方式：
+springMVC的拦截器interceptor拦截请求是通过HandleInterceptor来实现的。有两种方式：
+第一种方式是要定义的Interceptor类要实现了Spring 的HandlerInterceptor 接口，或者是这个类继承实现了HandlerInterceptor 接口的类，比如Spring 已经提供的实现了HandlerInterceptor 接口的抽象类HandlerInterceptorAdapter ；
+第二种方式是实现Spring的WebRequestInterceptor接口，或者是继承实现了WebRequestInterceptor的类。
+第二、范围：
+第一种是全部的control
+第二种是针对个别方法
+第三：执行顺序：
+拦截器的执行顺序是按声明的先后顺序执行的，先声明的拦截器中的preHandle方法会先执行，然而它的postHandle方法和afterCompletion方法却会后执行。
+  在mvc:interceptors标签下声明interceptor主要有两种方式：
+            （1）直接定义一个Interceptor实现类的bean对象。使用这种方式声明的Interceptor拦截器将会对所有的请求进行拦截。
+            （2）使用mvc:interceptor标签进行声明。使用这种方式进行声明的Interceptor可以通过mvc:mapping子标签来定义需要进行拦截的请求路径。
+                    
+运行：
+现在jar要求的默认的springmvc的xml名称默认为：
+SpringMVC-servlet.xml
+访问：端口为 8082
+全局拦截
+http://localhost:8082/tech39SpringFilter/control/get
+特殊请求拦截
+http://localhost:8082/tech39SpringFilter/control/only
+
+注意：过滤器不起作用情况： 原来写的是"/"
+确认tomcat的项目中:
+过滤器没写错，web.xml的过滤器配置没写错,是过滤所有文件"/*"
+
+
+
+
