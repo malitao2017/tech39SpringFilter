@@ -5,7 +5,25 @@
 http://elim.iteye.com/blog/1750680
 http://blog.csdn.net/chenleixing/article/details/44573495
 第二、Servlet中的过滤器(拦截器)Filter与监听器Listener的作用和区别
+http://m.blog.csdn.net/x_yp/article/details/6358630
 http://www.360doc.com/content/17/1019/10/48597276_696309074.shtml
+
+运行：
+现在jar要求的默认的springmvc的xml名称默认为：
+SpringMVC-servlet.xml
+访问：端口为 8082
+注意本案例中监听器生成的tomcat的dbcp是应用tomcat8的包，本机是 eclipse-apache-tomcat-8.0.24
+直接运行
+http://localhost:8082/tech39SpringFilter
+或者详细运行：
+特殊请求拦截
+http://localhost:8082/tech39SpringFilter/control/only
+全局拦截
+http://localhost:8082/tech39SpringFilter/control/get
+
+注意：过滤器不起作用情况： 原来写的是"/"
+确认tomcat的项目中:
+过滤器没写错，web.xml的过滤器配置没写错,是过滤所有文件"/*"
 
 
 模板来源： tech27SringMVC
@@ -30,19 +48,28 @@ springMVC的拦截器interceptor拦截请求是通过HandleInterceptor来实现�
   在mvc:interceptors标签下声明interceptor主要有两种方式：
             （1）直接定义一个Interceptor实现类的bean对象。使用这种方式声明的Interceptor拦截器将会对所有的请求进行拦截。
             （2）使用mvc:interceptor标签进行声明。使用这种方式进行声明的Interceptor可以通过mvc:mapping子标签来定义需要进行拦截的请求路径。
-                    
-运行：
-现在jar要求的默认的springmvc的xml名称默认为：
-SpringMVC-servlet.xml
-访问：端口为 8082
-全局拦截
-http://localhost:8082/tech39SpringFilter/control/get
-特殊请求拦截
-http://localhost:8082/tech39SpringFilter/control/only
 
-注意：过滤器不起作用情况： 原来写的是"/"
-确认tomcat的项目中:
-过滤器没写错，web.xml的过滤器配置没写错,是过滤所有文件"/*"
+
+
+1.过滤器 Servlet中的过滤器Filter
+主要的用途是过滤字符编码、做一些业务逻辑判断等。其工作原理是，只要你在web.xml文件配置好要拦截的客户端请求，它都会帮你拦截到请求，此时你就可以对请求或响应(Request、Response)统一设置编码，简化操作；同时还可进行逻辑判断，如用户是否已经登陆、有没有权限访问该页面等等工作。它是随你的web应用启动而启动的，只初始化一次，以后就可以拦截相关请求，只有当你的web应用停止或重新部署的时候才销毁
+所谓过滤器顾名思义是用来过滤的，在java web中，你传入的request,response提前过滤掉一些信息，或者提前设置一些参数，然后再传入servlet或者struts的action进行业务逻辑，比如过滤掉非法url（不是login.do的地址请求，如果用户没有登陆都过滤掉）,或者在传入servlet或者struts的action前统一设置字符集，或者去除掉一些非法字符（聊天室经常用到的，一些骂人的话）。filter 流程是线性的， url传来之后，检查之后，可保持原来的流程继续向下执行，被下一个filter, servlet接收等.
+2.监听器 Servlet的监听器Listener
+它是实现了javax.servlet.ServletContextListener 接口的服务器端程序，它也是随web应用的启动而启动，只初始化一次，随web应用的停止而销毁。主要作用是： 做一些初始化的内容添加工作、设置一些基本的内容、比如一些参数或者是一些固定的对象等等。
+这个东西在c/s模式里面经常用到，他会对特定的事件产生产生一个处理。监听在很多模式下用到。比如说观察者模式，就是一个监听来的。又比如struts可以用监听来启动。Servlet监听器用于监听一些重要事件的发生，监听器对象可以在事情发生前、发生后可以做一些必要的处理。
+3.拦截器
+拦截器是在面向切面编程中应用的，就是在你的service或者一个方法前调用一个方法，或者在方法后调用一个方法。是基于JAVA的反射机制。拦截器不是在web.xml，比如struts在struts.xml中配置
+public Object invoke(Object proxy, Method method, Object[] args) throws Throwable
+{
+	Object result = null;
+	System.out.println("before invoke method :" + method.getName());
+	result = method.invoke(this.targetObj, args);
+	System.out.println("after invoke method : " + method.getName());
+	return result;
+}
+主要是用在插件上，扩展件上比如 hivernate spring struts2等 有点类似面向切片的技术，在用之前先要在配置文件即xml文件里声明一段的那个东西。
+
+
 
 
 
